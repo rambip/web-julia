@@ -21,8 +21,8 @@
 		<noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>		
 		<script type="module">
                         // web-assembly importations
-			import init from './julia.js';
-                        import {Mandelbrot, Julia} from './julia.js';
+			import init from './pkg/julia.js';
+                        import {Mandelbrot, Julia} from './pkg/julia.js';
 
 			// init canvas size
 			let freeW = document.documentElement.clientWidth-40;
