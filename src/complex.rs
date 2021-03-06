@@ -16,10 +16,6 @@ impl Complex {
         self.a = a;
         self.b = b;
     }
-    
-    pub fn scale(&self, r: f64) -> Self {
-        Complex {a:self.a*r, b:self.b*r}
-    }
 }
 
 
@@ -28,16 +24,16 @@ pub struct Mandelbrot {
 }
 
 impl Mandelbrot {
-    pub fn calc_depth(&self, c: Complex) -> usize{
+    pub fn gradient(&self, c: Complex) -> f64{
         let mut z = Complex{a:0f64, b:0f64};
         for i in 0..self.depth {
-            z.add_to_it(&c);
             z.square_it();
+            z.add_to_it(&c);
             if z.a*z.a + z.b*z.b > 5f64 {
-                return i;
+                return i as f64 / self.depth as f64
             }
         }
-        return self.depth+1;
+        return 1.0
     }
 
 }
@@ -51,14 +47,14 @@ pub struct Julia {
 }
 
 impl Julia {
-    pub fn calc_depth(&self, mut z: Complex) -> usize {
+    pub fn gradient(&self, mut z: Complex) -> f64 {
         for i in 0..self.depth {
-            z.add_to_it(&self.c);
             z.square_it();
+            z.add_to_it(&self.c);
             if z.a*z.a+z.b*z.b > 5f64{
-                return i;
+                return i as f64 / self.depth as f64 
             }
         }
-        return self.depth+1;
+        return 1.0
     }
 }

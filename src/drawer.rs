@@ -23,8 +23,8 @@ impl Drawer {
 
     pub fn generate(&mut self, f: impl Fn(usize, usize) -> Color) {
         let mut ix = 0usize;
-        for y in 0..self.width {
-            for x in 0..self.height {
+        for y in 0..self.height {
+            for x in 0..self.width {
                 let (r, g, b, a) =  f(x, y);
 
                 self.raw_pixels[ix    ] = r;
@@ -39,8 +39,8 @@ impl Drawer {
     pub fn display(&self) -> Result<(), JsValue> {
         let data = ImageData::new_with_u8_clamped_array_and_sh(
             Clamped(&self.raw_pixels[..]), 
-            self.width as u32 * 2,
-            self.height as u32 * 2)?;
+            self.width as u32,
+            self.height as u32)?;
 
         self.ctx.put_image_data(&data, 0.0, 0.0)
     }

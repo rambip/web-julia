@@ -22,7 +22,7 @@
 		<script type="module">
                         // web-assembly importations
 			import init from './pkg/julia.js';
-                        import {Mandelbrot, Julia} from './pkg/julia.js';
+                        import {MandelbrotDrawer, JuliaDrawer} from './pkg/julia.js';
 
 			// init canvas size
 			let freeW = document.documentElement.clientWidth-40;
@@ -41,36 +41,33 @@
 			
 			
 			const m = document.getElementById("mandel"); m.width = size; m.height = size;
-			const mandel_ctx = m.getContext("2d");
-
-			let image_mandel = new ImageData(size, size);
-			let image_julia = new ImageData(size, size);
-
                         const xminM = -1.7;
                         const yminM = -1.2;
                         const scaleM = 2.4;
 
-			function draw_julia(event){
-				j.style.display = "block";
-				let m_rect = m.getBoundingClientRect();
-                                
-                                // get complex number corresponding to the position of the mouse
-				let a = (event.clientX - m_rect.left)*scaleM/size+xminM;
-				let b = (event.clientY - m_rect.top)*scaleM/size+yminM;
+                        function setup() {
+                                let mandelbrot = new MandelbrotDrawer(size, 50, xminM, yminM, scaleM, m.getContext("2d"));
+                                let julia = new JuliaDrawer(size, 50, -1.5, -1.5, 3.0, julia_ctx);
 
-				document.getElementById("complex").innerText = "C = " + a.toPrecision(3).toString() + "+" + b.toPrecision(3).toString() + "i ";
+                                mandelbrot.display();
+                                m.addEventListener("mousedown", draw_julia)
 
-				let julia = new Julia(a, b, 50);
-                                julia.draw(julia_ctx, size, -1.5 -a, -1.5 -b, 3.0)
-			}
+                                function draw_julia(event){
+                                        let m_rect = m.getBoundingClientRect();
+                                        
+                                       // get complex number corresponding to the position of the mouse
+                                        let a = (event.clientX - m_rect.left)*scaleM/size+xminM;
+                                        let b = (event.clientY - m_rect.top)*scaleM/size+yminM;
 
-			function draw_mandel(){
-				let mandelbrot = new Mandelbrot(50);
-                                mandelbrot.draw(mandel_ctx, size, xminM, yminM, scaleM);
-			}
+                                        document.getElementById("complex").innerText = "C = " + a.toPrecision(3).toString() + "+" + b.toPrecision(3).toString() + "i ";
 
-			m.addEventListener("mousedown", draw_julia);
-			init().then(draw_mandel);
+                                        julia.set_complex(a, b);
+                                        julia.display();
+                                }
+                        }
+
+
+                        init().then(setup);
 					</script>
 	</body>
 </html>

@@ -36,15 +36,19 @@ impl MandelbrotDrawer {
             &self.mandel, self.xmin, self.ymin, self.size, self.scale);
 
         // color of point on the complex plane
-        let color = |d: u8| (d *5, d*4, 80+d*40, (d-1)*15);
+        let color = |d: f64| (
+            (d.sqrt()*300.0 %200.0) as u8,
+            (d.sqrt()*10.0 % 200.0) as u8, 
+            (d.sqrt()*300.0 % 200.0) as u8+30, 
+            (d.sqrt()*300.0) as u8);
 
         // pixel space to complex plane
         let map_coord = |x: usize, y:usize|
-            Complex {a: xmin + x as f64,
-                     b: ymin + y as f64}
-                    .scale(size as f64 * scale);
+            Complex {a: xmin + x as f64 * scale / size  as f64,
+                     b: ymin + y as f64 * scale / size as f64};
 
-        self.drawer.generate(|x, y| color(mandel.calc_depth(map_coord(x, y)) as u8));
+        self.drawer.generate(|x, y| color(mandel.gradient(map_coord(x, y))));
+
         self.drawer.display()
     }
 }
@@ -74,6 +78,7 @@ impl JuliaDrawer {
         Self {drawer, julia, size, xmin, ymin, scale}
     }
 
+    #[wasm_bindgen]
     pub fn set_complex(&mut self, a: f64, b: f64) {
         self.julia.c = Complex {a, b};
     }
@@ -84,15 +89,20 @@ impl JuliaDrawer {
             &self.julia, self.xmin, self.ymin, self.size, self.scale);
 
         // color of point on the complex plane
-        let color = |d: u8| (d *5, d*4, 80+d*40, (d-1)*15);
+        let color = |d: f64| (
+            (d.sqrt()*300.0 %200.0) as u8,
+            (d.sqrt()*10.0 % 200.0) as u8, 
+            (d.sqrt()*300.0 % 200.0) as u8+30, 
+            (d.sqrt()*300.0) as u8);
 
         // pixel space to complex plane
         let map_coord = |x: usize, y:usize|
-            Complex {a: xmin + x as f64,
-                     b: ymin + y as f64}
-                    .scale(size as f64 * scale);
+            Complex {a: xmin + x as f64 * scale / size  as f64,
+                     b: ymin + y as f64 * scale / size as f64};
 
-        self.drawer.generate(|x, y| color(julia.calc_depth(map_coord(x, y)) as u8));
+        self.drawer.generate(|x, y| color(julia.gradient(map_coord(x, y))));
+            
+
         self.drawer.display()
     }
 }
