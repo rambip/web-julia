@@ -1,129 +1,98 @@
 use wasm_bindgen::prelude::*;
-use web_sys::{CanvasRenderingContext2d, ImageData};
-use wasm_bindgen::Clamped;
+use web_sys::{CanvasRenderingContext2d};
 
-#[derive(Clone)]
-struct Complex {
-    a : f64,
-    b : f64,
-}
+mod drawer;
+use drawer::{Drawer};
 
-impl Complex {
-    fn add_to_it(&mut self, c : &Complex){
-        self.a += c.a;
-        self.b += c.b;
-    }
-
-    fn square_it(&mut self){
-        let a = self.a*self.a - self.b*self.b;
-        let b = 2f64*self.a*self.b;
-        self.a = a;
-        self.b = b;
-    }
-}
+mod complex;
+use complex::{Complex, Mandelbrot, Julia};
 
 
 #[wasm_bindgen]
-pub struct Mandelbrot {
-    depth: usize
+pub struct MandelbrotDrawer {
+    drawer: Drawer,
+    mandel: Mandelbrot,
+    size: usize,
+    xmin: f64,
+    ymin: f64,
+    scale: f64,
 }
 
 #[wasm_bindgen]
-impl Mandelbrot {
+impl MandelbrotDrawer {
     #[wasm_bindgen(constructor)]
-    pub fn new(depth: usize) -> Mandelbrot{
-        Mandelbrot {depth}
+    pub fn new(size: usize, depth: usize, 
+               xmin: f64, ymin: f64, scale: f64, 
+               ctx: CanvasRenderingContext2d) -> Self {
+
+        let drawer = Drawer::new(size, size, ctx);
+        let mandel = Mandelbrot {depth};
+        Self {drawer, mandel, size, xmin, ymin, scale}
     }
-    fn calc_depth(&self, c: Complex) -> usize{
-        let mut z = Complex{a:0f64, b:0f64};
-        for i in 0..self.depth {
-            z.add_to_it(&c);
-            z.square_it();
-            if z.a*z.a + z.b*z.b > 5f64 {
-                return i;
-            }
-        }
-        return self.depth+1;
+    
+    #[wasm_bindgen]
+    pub fn display(&mut self) -> Result<(), JsValue> {
+        let (mandel, xmin, ymin, size, scale) = (
+            &self.mandel, self.xmin, self.ymin, self.size, self.scale);
+
+        // color of point on the complex plane
+        let color = |d: u8| (d *5, d*4, 80+d*40, (d-1)*15);
+
+        // pixel space to complex plane
+        let map_coord = |x: usize, y:usize|
+            Complex {a: xmin + x as f64,
+                     b: ymin + y as f64}
+                    .scale(size as f64 * scale);
+
+        self.drawer.generate(|x, y| color(mandel.calc_depth(map_coord(x, y)) as u8));
+        self.drawer.display()
     }
-    pub fn draw(&self, ctx: &CanvasRenderingContext2d, size_pixel : u32,
-                xmin: f64, ymin: f64, size_plane: f64) -> Result<(), JsValue>{
+}
 
-        let mut data = Vec::new();
 
-        for y_grid in 0..size_pixel {
-            for x_grid in 0..size_pixel {
-                let a = xmin + (x_grid as f64) / (size_pixel as f64) * size_plane;
-                let b = ymin + (y_grid as f64) / (size_pixel as f64) * size_plane;
-                
-                // calculate depth (iterations before diverging)
-                let d = self.calc_depth(Complex {a, b}) as f32;
 
-                // push corresponding pixel:
-                data.push((d*5.0) as u8); // red
-                data.push((d*4.5) as u8); // green
-                data.push((80.0+d*4.0) as u8); // blue
-                data.push(((d-1.0)*15.0) as u8); // transparency
-            }
-        }
-        // create imageData
-        let data = ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut data), size_pixel, size_pixel)?;
-        // draw on the screen
-        ctx.put_image_data(&data, 0.0, 0.0)
 
-    }
-
+#[wasm_bindgen]
+pub struct JuliaDrawer {
+    drawer: Drawer,
+    julia: Julia,
+    size: usize,
+    xmin: f64,
+    ymin: f64,
+    scale: f64,
 }
 
 #[wasm_bindgen]
-pub struct Julia{
-    c : Complex,
-    depth: usize
-}
-
-#[wasm_bindgen]
-impl Julia {
+impl JuliaDrawer {
     #[wasm_bindgen(constructor)]
-    pub fn new(a :f64, b:f64, depth: usize) -> Julia{
-        let c = Complex {a, b};
+    pub fn new(size: usize, depth: usize, 
+               xmin: f64, ymin: f64, scale: f64, 
+               ctx: CanvasRenderingContext2d) -> Self {
 
-        Julia {c, depth}
+        let drawer = Drawer::new(size, size, ctx);
+        let julia = Julia {c: Complex {a: 0.0, b: 0.0}, depth};
+        Self {drawer, julia, size, xmin, ymin, scale}
     }
 
-    fn calc_depth(&self, mut z: Complex) -> usize {
-        for i in 0..self.depth {
-            z.add_to_it(&self.c);
-            z.square_it();
-            if z.a*z.a+z.b*z.b > 5f64{
-                return i;
-            }
-        }
-        return self.depth+1;
+    pub fn set_complex(&mut self, a: f64, b: f64) {
+        self.julia.c = Complex {a, b};
     }
+    
+    #[wasm_bindgen]
+    pub fn display(&mut self) -> Result<(), JsValue> {
+        let (julia, xmin, ymin, size, scale) = (
+            &self.julia, self.xmin, self.ymin, self.size, self.scale);
 
-    pub fn draw(&self, ctx: &CanvasRenderingContext2d, size_pixel: u32,
-                xmin: f64, ymin: f64, size_plane : f64) -> Result<(), JsValue>{
+        // color of point on the complex plane
+        let color = |d: u8| (d *5, d*4, 80+d*40, (d-1)*15);
 
-        let mut data = Vec::new();
+        // pixel space to complex plane
+        let map_coord = |x: usize, y:usize|
+            Complex {a: xmin + x as f64,
+                     b: ymin + y as f64}
+                    .scale(size as f64 * scale);
 
-        for y_grid in 0..size_pixel {
-            for x_grid in 0..size_pixel{
-                let a = xmin + (x_grid as f64) / (size_pixel as f64) * size_plane;
-                let b = ymin + (y_grid as f64) / (size_pixel as f64) * size_plane;
-
-                // calculate depth at this point (iterations before diverging)
-                let d = self.calc_depth(Complex {a, b}) as f32;
-
-                // push corresponding pixel
-                data.push((d*5.0) as u8); // red
-                data.push((d*4.5) as u8);  // green
-                data.push((80.0+d*4.0) as u8); // blue
-                data.push(((d-1.0)*15.0) as u8); // transparency
-            }
-        }
-        // create Image Data
-        let data = ImageData::new_with_u8_clamped_array_and_sh(Clamped(&mut data), size_pixel, size_pixel)?;
-        // draw on the screen
-        ctx.put_image_data(&data, 0.0, 0.0)
-
+        self.drawer.generate(|x, y| color(julia.calc_depth(map_coord(x, y)) as u8));
+        self.drawer.display()
     }
 }
