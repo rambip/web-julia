@@ -6,6 +6,7 @@ END='\033[0m'
 
 echo -e "${BEG}Installing wasm-bindgen${END}"
 cargo install wasm-bindgen-cli --version "0.2.72"
+rustup target add wasm32-unknown-unknown
 
 echo -e "${BEG}Building project${END}"
 cargo build --release --target wasm32-unknown-unknown
