@@ -16,9 +16,9 @@ use complex::{Complex, Mandelbrot, Julia};
                          |_|                                  
 */
 
-const AFFINE_RED : (f32, f32)  = (200.0,  0.0);   // affine coefficient for red
-const AFFINE_GREE : (f32, f32) = (200.0, -20.0);   // affine coefficient for green
-const AFFINE_BLUE : (f32, f32) = (230.0, -30.0);   // affine coefficient for blue
+const AFFINE_RED : (f32, f32)  = (250.0,  0.0);   // affine coefficient for red
+const AFFINE_GREE : (f32, f32) = (250.0, -20.0);   // affine coefficient for green
+const AFFINE_BLUE : (f32, f32) = (250.0, -10.0);   // affine coefficient for blue
 const AFFINE_ALPH : (f32, f32) = (800.0, -20.0);   // affine coefficient for alpha
 
 
