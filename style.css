@@ -16,11 +16,7 @@ li {
 }
 
 body {
-	margin:0;
-	padding:0; 
-	overflow: hidden;
 	background-color:#181e22;
-	height: 100%;
 }
 
 canvas {
@@ -28,20 +24,3 @@ canvas {
 	margin: auto;
 	display: block;
 }
-
-pre {
-	color : white;
-}
-
-button {
-	background-color: lightblue;
-	border: 1px solid black;
-	border-radius: 5px;
-	padding: 5px 10px;
-}
-
-button:active {
-	filter: brightness(150%);
-}
-
-
