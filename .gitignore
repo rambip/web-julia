@@ -1,5 +1,4 @@
 *.js
 *.wasm
 pkg
-Cargo.lock
 target
