@@ -56,14 +56,6 @@ function getInt32Memory0() {
     return cachedInt32Memory0;
 }
 
-function handleError(f, args) {
-    try {
-        return f.apply(this, args);
-    } catch (e) {
-        wasm.__wbindgen_exn_store(addHeapObject(e));
-    }
-}
-
 let cachedUint8ClampedMemory0 = new Uint8ClampedArray();
 
 function getUint8ClampedMemory0() {
@@ -75,6 +67,14 @@ function getUint8ClampedMemory0() {
 
 function getClampedArrayU8FromWasm0(ptr, len) {
     return getUint8ClampedMemory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
+function handleError(f, args) {
+    try {
+        return f.apply(this, args);
+    } catch (e) {
+        wasm.__wbindgen_exn_store(addHeapObject(e));
+    }
 }
 /**
 */
@@ -218,16 +218,16 @@ async function load(module, imports) {
 function getImports() {
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
-        takeObject(arg0);
-    };
-    imports.wbg.__wbg_putImageData_23e0cc41d4fabcde = function() { return handleError(function (arg0, arg1, arg2, arg3) {
-        getObject(arg0).putImageData(getObject(arg1), arg2, arg3);
-    }, arguments) };
     imports.wbg.__wbg_newwithu8clampedarrayandsh_f7ef3a8f3fd04c8a = function() { return handleError(function (arg0, arg1, arg2, arg3) {
         const ret = new ImageData(getClampedArrayU8FromWasm0(arg0, arg1), arg2 >>> 0, arg3 >>> 0);
         return addHeapObject(ret);
     }, arguments) };
+    imports.wbg.__wbg_putImageData_23e0cc41d4fabcde = function() { return handleError(function (arg0, arg1, arg2, arg3) {
+        getObject(arg0).putImageData(getObject(arg1), arg2, arg3);
+    }, arguments) };
+    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
+        takeObject(arg0);
+    };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
@@ -266,7 +266,7 @@ function initSync(module) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('julia_bg.wasm', import.meta.url);
+        input = new URL('julia-a787fb46a14637d2_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
