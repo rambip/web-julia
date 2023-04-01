@@ -1,0 +1,26 @@
+{
+    "nixpkgs": {
+        "branch": "22.05",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "ce6aa13369b667ac2542593170993504932eb836",
+        "sha256": "0d643wp3l77hv2pmg2fi7vyxn4rwy0iyr8djcw1h5x72315ck9ik",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/ce6aa13369b667ac2542593170993504932eb836.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "wasm-tooling": {
+        "branch": "main",
+        "description": "nix expressions for webassembly tooling",
+        "homepage": null,
+        "owner": "rambip",
+        "repo": "wasm-tooling",
+        "rev": "12bff6a68464cee89ccfe75fd1242b10c3a6a8ab",
+        "sha256": "14mglskfcnah1r3gl61vjgfaz4w5r72js9zakaxzm3zj2cn1fcvb",
+        "type": "tarball",
+        "url": "https://github.com/rambip/wasm-tooling/archive/12bff6a68464cee89ccfe75fd1242b10c3a6a8ab.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    }
+}

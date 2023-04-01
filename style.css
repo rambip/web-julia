@@ -1,0 +1,26 @@
+h1 {
+	color: #2f78b4;
+}
+
+h2 {
+	color: #c94370;
+}
+
+div {
+	color: white;
+}
+
+li {
+	font-size: 20px;
+	margin: 20px;
+}
+
+body {
+	background-color:#181e22;
+}
+
+canvas {
+	padding: 0;
+	margin: auto;
+	display: block;
+}
